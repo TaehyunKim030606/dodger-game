@@ -4,6 +4,7 @@
 
 import random
 
+
 class DodgerObject:
     MIN_SIZE = 10
     MAX_SIZE = 40
@@ -12,11 +13,12 @@ class DodgerObject:
 
     def _init_size(self):
         """Initialize random size and derived radius. Call from subclass __init__."""
-        self.size = random.randrange(DodgerObject.MIN_SIZE, DodgerObject.MAX_SIZE + 1)
+        self.size = random.randrange(DodgerObject.MIN_SIZE,
+                                     DodgerObject.MAX_SIZE + 1)
         self.radius = self.size / 2
 
     def _get_center(self):
-        """Return (cx, cy) — center of this object based on current x, y."""
+        """Return (cx, cy) center of this object based on current x, y."""
         return self.x + self.radius, self.y + self.radius
 
     def collide(self, player_cx, player_cy, player_radius):
