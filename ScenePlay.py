@@ -45,7 +45,6 @@ STATE_PAUSED = 'paused'
 STATE_GAME_OVER = 'game over'
 SCORE_POPUP_FRAMES = 30
 SCORE_POPUP_COLOR = (0, 255, 0)
-POWER_UP_DURATION_MS = 8000
 
 
 class ScenePlay(pyghelpers.Scene):
@@ -53,59 +52,106 @@ class ScenePlay(pyghelpers.Scene):
     def __init__(self, window):
         self.window = window
 
-        self.controlsBackground = pygwidgets.Image(self.window,
-                                                    (0, GAME_HEIGHT),
-                                                    'images/controlsBackground.jpg')
-        self.quitButton = pygwidgets.CustomButton(self.window,
-                                                   (30, GAME_HEIGHT + 90),
-                                                   up='images/quitNormal.png',
-                                                   down='images/quitDown.png',
-                                                   over='images/quitOver.png',
-                                                   disabled='images/quitDisabled.png')
-        self.highScoresButton = pygwidgets.CustomButton(self.window,
-                                                         (190, GAME_HEIGHT + 90),
-                                                         up='images/gotoHighScoresNormal.png',
-                                                         down='images/gotoHighScoresDown.png',
-                                                         over='images/gotoHighScoresOver.png',
-                                                         disabled='images/gotoHighScoresDisabled.png')
-        self.newGameButton = pygwidgets.CustomButton(self.window,
-                                                      (450, GAME_HEIGHT + 90),
-                                                      up='images/startNewNormal.png',
-                                                      down='images/startNewDown.png',
-                                                      over='images/startNewOver.png',
-                                                      disabled='images/startNewDisabled.png',
-                                                      enterToActivate=True)
-        self.soundCheckBox = pygwidgets.TextCheckBox(self.window,
-                                                      (380, GAME_HEIGHT + 68),
-                                                      'Background music',
-                                                      True, textColor=WHITE)
-        self.gameOverImage = pygwidgets.Image(self.window, (140, 180),
-                                               'images/gameOver.png')
-        self.scoreTitleText = pygwidgets.DisplayText(self.window,
-                                                      (38, GAME_HEIGHT + 17),
-                                                      'Score:',
-                                                      fontSize=24, textColor=WHITE)
-        self.highScoreTitleText = pygwidgets.DisplayText(self.window,
-                                                          (205, GAME_HEIGHT + 17),
-                                                          'High Score:',
-                                                          fontSize=24, textColor=WHITE)
-        self.difficultyTitleText = pygwidgets.DisplayText(self.window,
-                                                           (425, GAME_HEIGHT + 17),
-                                                           'Level:',
-                                                           fontSize=24, textColor=WHITE)
-        self.scoreText = pygwidgets.DisplayText(self.window,
-                                                 (55, GAME_HEIGHT + 47), '0',
-                                                 fontSize=36, textColor=WHITE)
-        self.highScoreText = pygwidgets.DisplayText(self.window,
-                                                     (255, GAME_HEIGHT + 47), '',
-                                                     fontSize=36, textColor=WHITE)
-        self.difficultyText = pygwidgets.DisplayText(self.window,
-                                                      (450, GAME_HEIGHT + 47), '1',
-                                                      fontSize=36, textColor=WHITE)
+        self.controlsBackground = pygwidgets.Image(
+            self.window,
+            (0, GAME_HEIGHT),
+            'images/controlsBackground.jpg'
+        )
+
+        self.quitButton = pygwidgets.CustomButton(
+            self.window,
+            (30, GAME_HEIGHT + 90),
+            up='images/quitNormal.png',
+            down='images/quitDown.png',
+            over='images/quitOver.png',
+            disabled='images/quitDisabled.png'
+        )
+
+        self.highScoresButton = pygwidgets.CustomButton(
+            self.window,
+            (190, GAME_HEIGHT + 90),
+            up='images/gotoHighScoresNormal.png',
+            down='images/gotoHighScoresDown.png',
+            over='images/gotoHighScoresOver.png',
+            disabled='images/gotoHighScoresDisabled.png'
+        )
+
+        self.newGameButton = pygwidgets.CustomButton(
+            self.window,
+            (450, GAME_HEIGHT + 90),
+            up='images/startNewNormal.png',
+            down='images/startNewDown.png',
+            over='images/startNewOver.png',
+            disabled='images/startNewDisabled.png',
+            enterToActivate=True
+        )
+
+        self.soundCheckBox = pygwidgets.TextCheckBox(
+            self.window,
+            (380, GAME_HEIGHT + 68),
+            'Background music',
+            True,
+            textColor=WHITE
+        )
+
+        self.gameOverImage = pygwidgets.Image(
+            self.window,
+            (140, 180),
+            'images/gameOver.png'
+        )
+
+        self.scoreTitleText = pygwidgets.DisplayText(
+            self.window,
+            (38, GAME_HEIGHT + 17),
+            'Score:',
+            fontSize=24,
+            textColor=WHITE
+        )
+
+        self.highScoreTitleText = pygwidgets.DisplayText(
+            self.window,
+            (205, GAME_HEIGHT + 17),
+            'High Score:',
+            fontSize=24,
+            textColor=WHITE
+        )
+
+        self.difficultyTitleText = pygwidgets.DisplayText(
+            self.window,
+            (425, GAME_HEIGHT + 17),
+            'Level:',
+            fontSize=24,
+            textColor=WHITE
+        )
+
+        self.scoreText = pygwidgets.DisplayText(
+            self.window,
+            (55, GAME_HEIGHT + 47),
+            '0',
+            fontSize=36,
+            textColor=WHITE
+        )
+
+        self.highScoreText = pygwidgets.DisplayText(
+            self.window,
+            (255, GAME_HEIGHT + 47),
+            '',
+            fontSize=36,
+            textColor=WHITE
+        )
+
+        self.difficultyText = pygwidgets.DisplayText(
+            self.window,
+            (450, GAME_HEIGHT + 47),
+            '1',
+            fontSize=36,
+            textColor=WHITE
+        )
 
         pygame.mixer.music.load('sounds/background.mid')
         self.dingSound = pygame.mixer.Sound('sounds/ding.wav')
         self.gameOverSound = pygame.mixer.Sound('sounds/gameover.wav')
+
         self.scorePopupFont = pygame.font.Font(None, 32)
         self.pauseTitleFont = pygame.font.Font(None, 72)
         self.pauseHelpFont = pygame.font.Font(None, 32)
@@ -119,12 +165,15 @@ class ScenePlay(pyghelpers.Scene):
         self.highestHighScore = 0
         self.lowestHighScore = 0
         self.backgroundMusic = True
+
         self.score = 0
         self.scorePopups = []
+
         self.shrinkEndTicks = 0
         self.invincibleEndTicks = 0
         self.gameStartTicks = 0
         self.pauseStartTicks = 0
+
         self.difficultyLevel = 1
         self.playingState = STATE_WAITING
 
@@ -143,23 +192,27 @@ class ScenePlay(pyghelpers.Scene):
     def reset(self):
         self.score = 0
         self.scoreText.setValue(self.score)
+
         self.scorePopups = []
+
         self.shrinkEndTicks = 0
         self.invincibleEndTicks = 0
         self.gameStartTicks = pygame.time.get_ticks()
         self.pauseStartTicks = 0
+
         self.difficultyLevel = 1
         self.difficultyText.setValue(self.difficultyLevel)
+
         self.getHiAndLowScores()
+
         self.oBaddieMgr.reset()
         self.oGoodieMgr.reset()
         self.oPowerUpMgr.reset()
+
         if self.backgroundMusic:
             pygame.mixer.music.play(-1, 0.0)
-        self.newGameButton.disable()
-        self.highScoresButton.disable()
-        self.soundCheckBox.disable()
-        self.quitButton.disable()
+
+        self._set_ui_enabled(False)
         pygame.mouse.set_visible(False)
 
     def handleInputs(self, eventsList, keyPressedList):
@@ -177,10 +230,13 @@ class ScenePlay(pyghelpers.Scene):
             if self.newGameButton.handleEvent(event):
                 self.reset()
                 self.playingState = STATE_PLAYING
+
             if self.highScoresButton.handleEvent(event):
                 self.goToScene(SCENE_HIGH_SCORES)
+
             if self.soundCheckBox.handleEvent(event):
                 self.backgroundMusic = self.soundCheckBox.getValue()
+
             if self.quitButton.handleEvent(event):
                 self.quit()
 
@@ -192,14 +248,20 @@ class ScenePlay(pyghelpers.Scene):
 
     def _resumeGame(self):
         pausedDuration = pygame.time.get_ticks() - self.pauseStartTicks
+
         self.gameStartTicks += pausedDuration
+
         if self.shrinkEndTicks > 0:
             self.shrinkEndTicks += pausedDuration
+
         if self.invincibleEndTicks > 0:
             self.invincibleEndTicks += pausedDuration
+
         self.pauseStartTicks = 0
         self.playingState = STATE_PLAYING
+
         pygame.mouse.set_visible(False)
+
         if self.backgroundMusic:
             pygame.mixer.music.unpause()
 
@@ -208,60 +270,125 @@ class ScenePlay(pyghelpers.Scene):
             return
 
         nowTicks = pygame.time.get_ticks()
-        mouseX, mouseY = pygame.mouse.get_pos()
-        cx, cy, radius = self.oPlayer.update(mouseX, mouseY)
 
-        if nowTicks < self.shrinkEndTicks:
-            radius = radius / 2
+        player_cx, player_cy, player_radius = self._update_player()
+        player_radius = self._apply_player_effects(player_radius, nowTicks)
 
         self._update_difficulty(nowTicks)
-        self._update_score(cx, cy, radius, nowTicks)
-        self._update_powerups(cx, cy, radius, nowTicks)
 
-        isInvincible = nowTicks < self.invincibleEndTicks
-        if (not isInvincible) and self.oBaddieMgr.hasPlayerHitBaddie(cx, cy, radius):
-            self._handle_game_over()
+        nBaddiesHit = self._update_objects_and_score(
+            player_cx,
+            player_cy,
+            player_radius
+        )
+
+        self._update_powerups(
+            player_cx,
+            player_cy,
+            player_radius,
+            nowTicks
+        )
+
+        self._update_score_popups()
+        self._check_game_over(nBaddiesHit, nowTicks)
+
+    def _update_player(self):
+        mouseX, mouseY = pygame.mouse.get_pos()
+        player_cx, player_cy, player_radius = self.oPlayer.update(mouseX, mouseY)
+        return player_cx, player_cy, player_radius
+
+    def _apply_player_effects(self, player_radius, nowTicks):
+        if nowTicks < self.shrinkEndTicks:
+            player_radius = player_radius / 2
+
+        return player_radius
 
     def _update_difficulty(self, nowTicks):
         elapsedSeconds = (nowTicks - self.gameStartTicks) // 1000
-        self.difficultyLevel = min(MAX_DIFFICULTY_LEVEL,
-                                   (elapsedSeconds // SECONDS_PER_DIFFICULTY_LEVEL) + 1)
+
+        self.difficultyLevel = min(
+            MAX_DIFFICULTY_LEVEL,
+            (elapsedSeconds // SECONDS_PER_DIFFICULTY_LEVEL) + 1
+        )
+
         self.difficultyText.setValue(self.difficultyLevel)
 
-    def _update_score(self, cx, cy, radius, nowTicks):
-        goodieHits = self.oGoodieMgr.update(cx, cy, radius)
-        if len(goodieHits) > 0:
-            self.dingSound.play()
-            for goodieHit in goodieHits:
-                x, y = goodieHit['loc']
-                points = goodieHit['points']
-                self.score += points
-                self.scorePopups.append({'x': x, 'y': y,
-                                         'points': points,
-                                         'framesLeft': SCORE_POPUP_FRAMES})
+    def _update_objects_and_score(self, player_cx, player_cy, player_radius):
+        goodieHits = self.oGoodieMgr.update(
+            player_cx,
+            player_cy,
+            player_radius
+        )
 
-        nBaddiesEvaded = self.oBaddieMgr.update(self.difficultyLevel)
+        self._handle_goodie_hits(goodieHits)
+
+        nBaddiesHit, nBaddiesEvaded = self.oBaddieMgr.update(
+            player_cx,
+            player_cy,
+            player_radius
+        )
+
         self.score += nBaddiesEvaded * POINTS_FOR_BADDIE_EVADED
         self.scoreText.setValue(self.score)
 
-        for scorePopup in self.scorePopups.copy():
+        return nBaddiesHit
+
+    def _handle_goodie_hits(self, goodieHits):
+        if len(goodieHits) == 0:
+            return
+
+        self.dingSound.play()
+
+        for goodieHit in goodieHits:
+            x, y = goodieHit['loc']
+            points = goodieHit['points']
+
+            self.score += points
+
+            self.scorePopups.append({
+                'x': x,
+                'y': y,
+                'points': points,
+                'framesLeft': SCORE_POPUP_FRAMES
+            })
+
+    def _update_score_popups(self):
+        survivors = []
+
+        for scorePopup in self.scorePopups:
             scorePopup['framesLeft'] -= 1
             scorePopup['y'] -= 1
-            if scorePopup['framesLeft'] <= 0:
-                self.scorePopups.remove(scorePopup)
 
-    def _update_powerups(self, cx, cy, radius, nowTicks):
-        powerUpsHit = self.oPowerUpMgr.update(cx, cy, radius)
+            if scorePopup['framesLeft'] > 0:
+                survivors.append(scorePopup)
+
+        self.scorePopups = survivors
+
+    def _update_powerups(self, player_cx, player_cy, player_radius, nowTicks):
+        powerUpsHit = self.oPowerUpMgr.update(
+            player_cx,
+            player_cy,
+            player_radius
+        )
+
         for powerUpHit in powerUpsHit:
             if powerUpHit == POWER_UP_SHRINK:
                 self.shrinkEndTicks = nowTicks + POWER_UP_DURATION_MS
+
             elif powerUpHit == POWER_UP_INVINCIBLE:
                 self.invincibleEndTicks = nowTicks + POWER_UP_DURATION_MS
+
+    def _check_game_over(self, nBaddiesHit, nowTicks):
+        isInvincible = nowTicks < self.invincibleEndTicks
+
+        if (not isInvincible) and nBaddiesHit > 0:
+            self._handle_game_over()
 
     def _handle_game_over(self):
         pygame.mouse.set_visible(True)
         pygame.mixer.music.stop()
         self.gameOverSound.play()
+
         self.playingState = STATE_GAME_OVER
         self.draw()
 
@@ -272,6 +399,7 @@ class ScenePlay(pyghelpers.Scene):
 
     def _prompt_high_score(self):
         score_str = f'Your score: {self.score}\n'
+
         if self.score > self.highestHighScore:
             dialog_text = score_str + 'is a new high score, CONGRATULATIONS!'
         else:
@@ -280,22 +408,36 @@ class ScenePlay(pyghelpers.Scene):
         if self.oDialog.show(dialog_text):
             self.goToScene(SCENE_HIGH_SCORES, self.score)
 
+    def _set_ui_enabled(self, enabled):
+        widgets = [
+            self.newGameButton,
+            self.highScoresButton,
+            self.soundCheckBox,
+            self.quitButton
+        ]
+
+        methodNames = ['enable'] * len(widgets) if enabled else ['disable'] * len(widgets)
+
+        for widget, methodName in zip(widgets, methodNames):
+            getattr(widget, methodName)()
+
     def _enable_ui(self):
-        self.newGameButton.enable()
-        self.highScoresButton.enable()
-        self.soundCheckBox.enable()
-        self.quitButton.enable()
+        self._set_ui_enabled(True)
 
     def draw(self):
         self.window.fill(BLACK)
+
         self.oBaddieMgr.draw()
         self.oGoodieMgr.draw()
         self.oPowerUpMgr.draw()
         self.oPlayer.draw()
 
         for scorePopup in self.scorePopups:
-            popupSurface = self.scorePopupFont.render('+' + str(scorePopup['points']),
-                                                      True, SCORE_POPUP_COLOR)
+            popupSurface = self.scorePopupFont.render(
+                '+' + str(scorePopup['points']),
+                True,
+                SCORE_POPUP_COLOR
+            )
             self.window.blit(popupSurface, (scorePopup['x'], scorePopup['y']))
 
         self.controlsBackground.draw()
@@ -311,16 +453,31 @@ class ScenePlay(pyghelpers.Scene):
         self.newGameButton.draw()
 
         if self.playingState == STATE_PAUSED:
-            overlay = pygame.Surface((WINDOW_WIDTH, GAME_HEIGHT), pygame.SRCALPHA)
+            overlay = pygame.Surface(
+                (WINDOW_WIDTH, GAME_HEIGHT),
+                pygame.SRCALPHA
+            )
             overlay.fill((0, 0, 0, 150))
             self.window.blit(overlay, (0, 0))
-            pauseSurface = self.pauseTitleFont.render('PAUSED', True, WHITE)
-            pauseRect = pauseSurface.get_rect(center=(WINDOW_WIDTH // 2,
-                                                      GAME_HEIGHT // 2 - 20))
+
+            pauseSurface = self.pauseTitleFont.render(
+                'PAUSED',
+                True,
+                WHITE
+            )
+            pauseRect = pauseSurface.get_rect(
+                center=(WINDOW_WIDTH // 2, GAME_HEIGHT // 2 - 20)
+            )
             self.window.blit(pauseSurface, pauseRect)
-            helpSurface = self.pauseHelpFont.render('Press P to resume', True, WHITE)
-            helpRect = helpSurface.get_rect(center=(WINDOW_WIDTH // 2,
-                                                    GAME_HEIGHT // 2 + 35))
+
+            helpSurface = self.pauseHelpFont.render(
+                'Press P to resume',
+                True,
+                WHITE
+            )
+            helpRect = helpSurface.get_rect(
+                center=(WINDOW_WIDTH // 2, GAME_HEIGHT // 2 + 35)
+            )
             self.window.blit(helpSurface, helpRect)
 
         if self.playingState == STATE_GAME_OVER:
