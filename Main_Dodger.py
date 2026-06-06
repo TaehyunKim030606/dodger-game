@@ -15,6 +15,7 @@ import pyghelpers
 from SceneSplash import *
 from ScenePlay import *
 from SceneHighScores import *
+from HighScoresData import *
 
 # 2 - Define constants
 FRAMES_PER_SECOND = 40
@@ -24,13 +25,13 @@ pygame.init()
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 # 4 - Load assets: image(s), sounds,  etc.
+oSharedHighScoresData = HighScoresData()
 
 # 5 - Initialize variables
 # Instantiate all scenes and store them in a list
 scenesList = [SceneSplash(window),
-                    SceneHighScores(window),
+                    SceneHighScores(window, oSharedHighScoresData),
                     ScenePlay(window)]
-
 # Create the scene manager, passing in the scenes list and the FPS
 oSceneMgr = pyghelpers.SceneMgr(scenesList, FRAMES_PER_SECOND)
 
