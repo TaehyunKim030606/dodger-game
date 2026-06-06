@@ -2,6 +2,7 @@
 
 import pygame
 import random
+import math
 from Constants import *
 
 POWER_UP_SHRINK = 'shrink'
@@ -27,6 +28,7 @@ class PowerUp():
     def update(self):
         self.y = self.y + self.speed
         self.rect.topleft = (self.x, self.y)
+
         return self.y > GAME_HEIGHT
 
     def draw(self):
@@ -39,12 +41,22 @@ class PowerUp():
 
         pygame.draw.ellipse(self.window, color, self.rect)
         pygame.draw.ellipse(self.window, WHITE, self.rect, 2)
+
         labelSurface = self.font.render(label, True, BLACK)
         labelRect = labelSurface.get_rect(center=self.rect.center)
         self.window.blit(labelSurface, labelRect)
 
-    def collide(self, playerRect):
-        return self.rect.colliderect(playerRect)
+    def collide(self, player_cx, player_cy, player_radius):
+        powerup_cx = self.rect.centerx
+        powerup_cy = self.rect.centery
+        powerup_radius = self.rect.width // 2
+
+        distance = math.hypot(
+            player_cx - powerup_cx,
+            player_cy - powerup_cy
+        )
+
+        return distance < player_radius + powerup_radius
 
 
 class PowerUpMgr():
@@ -57,25 +69,34 @@ class PowerUpMgr():
 
     def reset(self):
         self.powerUpsList = []
-        self.nFramesTilNextPowerUp = random.randrange(PowerUpMgr.POWER_UP_RATE_LO,
-                                                      PowerUpMgr.POWER_UP_RATE_HI)
+        self.nFramesTilNextPowerUp = random.randrange(
+            PowerUpMgr.POWER_UP_RATE_LO,
+            PowerUpMgr.POWER_UP_RATE_HI
+        )
 
-    def update(self, playerRect):
+    def update(self, player_cx, player_cy, player_radius):
         powerUpsHit = []
+
         powerUpsListCopy = self.powerUpsList.copy()
+
         for oPowerUp in powerUpsListCopy:
             deleteMe = oPowerUp.update()
+
             if deleteMe:
                 self.powerUpsList.remove(oPowerUp)
-            elif oPowerUp.collide(playerRect):
+
+            elif oPowerUp.collide(player_cx, player_cy, player_radius):
                 powerUpsHit.append(oPowerUp.kind)
                 self.powerUpsList.remove(oPowerUp)
 
         self.nFramesTilNextPowerUp = self.nFramesTilNextPowerUp - 1
+
         if self.nFramesTilNextPowerUp == 0:
             self.powerUpsList.append(PowerUp(self.window))
             self.nFramesTilNextPowerUp = random.randrange(
-                PowerUpMgr.POWER_UP_RATE_LO, PowerUpMgr.POWER_UP_RATE_HI)
+                PowerUpMgr.POWER_UP_RATE_LO,
+                PowerUpMgr.POWER_UP_RATE_HI
+            )
 
         return powerUpsHit
 
