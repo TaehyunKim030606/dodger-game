@@ -50,9 +50,9 @@ def showCustomResetDialog(theWindow, theText):
 
 
 class SceneHighScores(pyghelpers.Scene):
-    def __init__(self, window):
+    def __init__(self, window, oHighScoresData):
         self.window = window
-        self.oHighScoresData = HighScoresData()
+        self.oHighScoresData = oHighScoresData
         
         self.backgroundImage = pygwidgets.Image(self.window,
                                                 (0, 0),
