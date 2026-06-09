@@ -156,7 +156,7 @@ class ScenePlay(pyghelpers.Scene):
         self.pauseTitleFont = pygame.font.Font(None, 72)
         self.pauseHelpFont = pygame.font.Font(None, 32)
 
-        self.oPlayer = Player(self.window)
+        self.oPlayer = Player(self.window, WINDOW_WIDTH, GAME_HEIGHT)
         self.oBaddieMgr = BaddieMgr(self.window)
         self.oGoodieMgr = GoodieMgr(self.window)
         self.oPowerUpMgr = PowerUpMgr(self.window)

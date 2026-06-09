@@ -1,12 +1,13 @@
 # Player
 import pygame
 import pygwidgets
-from Constants import *
 
 
 class Player():
-    def __init__(self, window):
+    def __init__(self, window, window_width, game_height):
         self.window = window
+        self.windowWidth = window_width
+        self.gameHeight = game_height
         self.loc = (-100, -100)
 
         self.normalSurface = pygame.image.load('images/player.png').convert_alpha()
@@ -20,8 +21,8 @@ class Player():
         self.image = pygwidgets.Image(window, self.loc, self.normalSurface)
 
         playerRect = self.image.getRect()
-        self.maxX = WINDOW_WIDTH - playerRect.width
-        self.maxY = GAME_HEIGHT - playerRect.height
+        self.maxX = self.windowWidth - playerRect.width
+        self.maxY = self.gameHeight - playerRect.height
 
     def setSmall(self, shouldBeSmall):
         if self.isSmall == shouldBeSmall:
@@ -40,8 +41,8 @@ class Player():
         self.image = pygwidgets.Image(self.window, self.loc, surface)
 
         playerRect = self.image.getRect()
-        self.maxX = WINDOW_WIDTH - playerRect.width
-        self.maxY = GAME_HEIGHT - playerRect.height
+        self.maxX = self.windowWidth - playerRect.width
+        self.maxY = self.gameHeight - playerRect.height
 
     # Every frame, move the Player icon to the mouse position
     # Limits the x- and y-coordinates to the game area of the window
