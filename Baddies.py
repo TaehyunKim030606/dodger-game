@@ -11,7 +11,7 @@ class Baddie(DodgerObject):
     # Load the image once
     BADDIE_IMAGE = pygame.image.load('images/baddie.png')
 
-    def __init__(self, window):
+    def __init__(self, window, difficultyLevel=1):
         self.window = window
 
         # DodgerObject에서 size, radius 초기화
@@ -20,8 +20,9 @@ class Baddie(DodgerObject):
         self.x = random.randrange(0, WINDOW_WIDTH - self.size)
         self.y = 0 - self.size
 
+        speedBonus = max(0, difficultyLevel - 1)
         self.speed = random.randrange(DodgerObject.MIN_SPEED,
-                                      DodgerObject.MAX_SPEED + 1)
+                                      DodgerObject.MAX_SPEED + 1) + speedBonus
 
         self.image = pygwidgets.Image(self.window,
                                       (self.x, self.y),
@@ -52,7 +53,7 @@ class BaddieMgr():
         self.baddiesList = []
         self.nFramesTilNextBaddie = BaddieMgr.BADDIE_RATE_HI
 
-    def update(self, player_cx, player_cy, player_radius):
+    def update(self, player_cx, player_cy, player_radius, difficultyLevel=1):
         # Baddie들을 움직이고,
         # 화면 밖으로 나간 Baddie와 플레이어와 충돌한 Baddie를 제거
 
@@ -81,12 +82,16 @@ class BaddieMgr():
         self.nFramesTilNextBaddie = self.nFramesTilNextBaddie - 1
 
         if self.nFramesTilNextBaddie == 0:
-            oBaddie = Baddie(self.window)
+            oBaddie = Baddie(self.window, difficultyLevel)
             self.baddiesList.append(oBaddie)
 
+            rateReduction = max(0, difficultyLevel - 1) * 2
+            rateLo = max(5, BaddieMgr.BADDIE_RATE_LO - rateReduction)
+            rateHi = max(rateLo + 1, BaddieMgr.BADDIE_RATE_HI - rateReduction)
+
             self.nFramesTilNextBaddie = random.randrange(
-                BaddieMgr.BADDIE_RATE_LO,
-                BaddieMgr.BADDIE_RATE_HI
+                rateLo,
+                rateHi
             )
 
         return nBaddiesHit, nBaddiesEvaded
