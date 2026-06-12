@@ -7,8 +7,14 @@
 
 # 1 - Import packages
 import os
-# The next line is here just in case you are running from the command line
-os.chdir(os.path.dirname(os.path.abspath(__file__)))
+import sys
+
+#
+#  Always load game modules and assets relative to this file.
+game_dir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(game_dir)
+if game_dir not in sys.path:
+      sys.path.insert(0, game_dir)
 
 import pygame
 import pyghelpers
