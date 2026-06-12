@@ -202,6 +202,7 @@ class ScenePlay(pyghelpers.Scene):
 
         self.difficultyLevel = 1
         self.difficultyText.setValue(self.difficultyLevel)
+        self.oPlayer.setSmall(False)
 
         self.getHiAndLowScores()
 
@@ -271,8 +272,8 @@ class ScenePlay(pyghelpers.Scene):
 
         nowTicks = pygame.time.get_ticks()
 
+        self._apply_player_effects(nowTicks)
         player_cx, player_cy, player_radius = self._update_player()
-        player_radius = self._apply_player_effects(player_radius, nowTicks)
 
         self._update_difficulty(nowTicks)
 
@@ -297,11 +298,8 @@ class ScenePlay(pyghelpers.Scene):
         player_cx, player_cy, player_radius = self.oPlayer.update(mouseX, mouseY)
         return player_cx, player_cy, player_radius
 
-    def _apply_player_effects(self, player_radius, nowTicks):
-        if nowTicks < self.shrinkEndTicks:
-            player_radius = player_radius / 2
-
-        return player_radius
+    def _apply_player_effects(self, nowTicks):
+        self.oPlayer.setSmall(nowTicks < self.shrinkEndTicks)
 
     def _update_difficulty(self, nowTicks):
         elapsedSeconds = (nowTicks - self.gameStartTicks) // 1000
@@ -325,7 +323,8 @@ class ScenePlay(pyghelpers.Scene):
         nBaddiesHit, nBaddiesEvaded = self.oBaddieMgr.update(
             player_cx,
             player_cy,
-            player_radius
+            player_radius,
+            self.difficultyLevel
         )
 
         self.score += nBaddiesEvaded * POINTS_FOR_BADDIE_EVADED
@@ -430,7 +429,13 @@ class ScenePlay(pyghelpers.Scene):
         self.oBaddieMgr.draw()
         self.oGoodieMgr.draw()
         self.oPowerUpMgr.draw()
-        self.oPlayer.draw()
+        effectTicks = (
+            self.pauseStartTicks
+            if self.playingState == STATE_PAUSED
+            else pygame.time.get_ticks()
+        )
+        isInvincible = effectTicks < self.invincibleEndTicks
+        self.oPlayer.draw(isInvincible)
 
         for scorePopup in self.scorePopups:
             popupSurface = self.scorePopupFont.render(
